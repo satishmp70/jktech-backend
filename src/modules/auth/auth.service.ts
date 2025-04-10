@@ -2,14 +2,15 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { messagesConstant } from 'src/common/constants/messages.constant';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private jwtService: JwtService,
     private prisma: PrismaService,
+    private usersService: UsersService
   ) { }
 
   async validateUser(email: string, password: string) {
@@ -63,4 +64,20 @@ export class AuthService {
       },
     };
   }
+
+  generateToken(user: any): string {
+    const payload = {
+      sub: user.id,
+      email: user.email,
+    };
+    return this.jwtService.sign(payload);
+  }
+  
+  async validateOAuthLogin(profile: any, provider: 'google' | 'facebook'): Promise<{ access_token: string; user: any }> {
+    const user = await this.usersService.findOrCreate(profile, provider);
+    const payload = { sub: user.id, role: user.role.name };
+    const access_token = this.jwtService.sign(payload);
+    return { access_token, user };
+  }
+
 }

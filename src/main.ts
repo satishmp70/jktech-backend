@@ -18,6 +18,12 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
 
   dotenv.config();
+
+  app.enableCors({
+    origin: true,
+    credentials: true,
+  });
+
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

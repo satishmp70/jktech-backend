@@ -7,7 +7,8 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UsersModule } from '../users/users.module';
 import { ConfigService } from '@nestjs/config';
-import { GoogleOauthModule } from './google-oauth/google-oauth.module';
+import { GoogleStrategy } from './strategies/google.strategy';
+import { FacebookStrategy } from './strategies/facebook.strategy';
 
 @Module({
   imports: [
@@ -20,9 +21,8 @@ import { GoogleOauthModule } from './google-oauth/google-oauth.module';
       inject: [ConfigService],
     }),
     UsersModule,
-    GoogleOauthModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, PrismaService],
+  providers: [AuthService, JwtStrategy, PrismaService,GoogleStrategy, FacebookStrategy],
 })
 export class AuthModule { }

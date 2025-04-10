@@ -4,77 +4,71 @@ import * as bcrypt from 'bcrypt';
 const prisma = new PrismaClient();
 
 async function main() {
-  // Clear existing data (optional)
+  // Clear existing data (respecting relations)
   await prisma.blog.deleteMany();
   await prisma.user.deleteMany();
   await prisma.role.deleteMany();
 
-  // Create Roles
+  // Create roles
   const adminRole = await prisma.role.create({
-    data: {
-      name: 'Admin',
-    },
+    data: { name: 'Admin' },
   });
 
   const userRole = await prisma.role.create({
-    data: {
-      name: 'User',
-    },
+    data: { name: 'User' },
   });
 
-  // Hashed passwords
-  const password1 = await bcrypt.hash('admin123', 10);
-  const password2 = await bcrypt.hash('user123', 10);
+  // Hash passwords
+  const adminPassword = await bcrypt.hash('secureadminpass', 10);
+  const userPassword = await bcrypt.hash('secureuserpass', 10);
 
-  // Create Users
-  const adminUser = await prisma.user.create({
+  // Create Admin user
+  const admin = await prisma.user.create({
     data: {
-      name: 'Admin One',
+      name: 'Admin User',
       email: 'admin@example.com',
-      password: password1,
+      password: adminPassword,
       roleId: adminRole.id,
+      avatar: 'https://i.pravatar.cc/150?img=1',
       isVerified: true,
-      isDeleted: false,
     },
   });
 
-  const regularUser = await prisma.user.create({
+  // Create Regular user
+  const user = await prisma.user.create({
     data: {
       name: 'Regular User',
       email: 'user@example.com',
-      password: password2,
+      password: userPassword,
       roleId: userRole.id,
+      avatar: 'https://i.pravatar.cc/150?img=2',
       isVerified: true,
-      isDeleted: false,
     },
   });
 
-  // Create Blogs
-  await prisma.blog.createMany({
-    data: [
-      {
-        title: 'First Blog Post',
-        content: 'This is the content for the first blog.',
-        userId: adminUser.id, // Link to Admin User
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      {
-        title: 'Second Blog Post',
-        content: 'This is the content for the second blog.',
-        userId: regularUser.id, // Link to Regular User
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-    ],
+  // Create blogs
+  await prisma.blog.create({
+    data: {
+      title: 'Admin Blog Post',
+      content: 'This is an admin blog post.',
+      userId: admin.id,
+    },
   });
 
-  console.log('Seed completed with users, roles, and blogs.');
+  await prisma.blog.create({
+    data: {
+      title: 'User Blog Post',
+      content: 'This is a user blog post.',
+      userId: user.id,
+    },
+  });
+
+  console.log('Seed data created successfully!');
 }
 
 main()
   .catch((e) => {
-    console.error('Error while seeding:', e);
+    console.error('Error seeding database:', e);
     process.exit(1);
   })
   .finally(async () => {

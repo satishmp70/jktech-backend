@@ -57,7 +57,6 @@ export class BlogService {
     return blog;
   }
 
-  // Optional: Update blog (admin or blog owner only)
   async update(id: number, data: UpdateBlogDto) {
     return this.prisma.blog.update({
       
@@ -66,7 +65,6 @@ export class BlogService {
     });
   }
 
-  // Optional: Delete blog
   async delete(id: number) {
     return this.prisma.blog.delete({ where: { id } });
   }

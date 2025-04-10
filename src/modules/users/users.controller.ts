@@ -80,8 +80,6 @@ export class UsersController {
         @Request() req,
     ) {
         const currentUser = req.user;
-        console.log('Current User:', req.user);
-
         await this.userPolicyService.validateUpdateAccess(currentUser, id, updateUserDto);
 
         const user = await this.usersService.findOneById(id);

@@ -7,6 +7,8 @@ import {
   UseGuards,
   Request,
   ParseIntPipe,
+  Put,
+  NotFoundException,
 } from '@nestjs/common';
 import { BlogService } from './blog.service';
 import { CreateBlogDto } from './dto/create-blog.dto';
@@ -14,13 +16,20 @@ import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { ApiBearerAuth, ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Public } from 'src/common/decorators/public.decorator';
+import { UpdateBlogDto } from './dto/update-blog.dto';
+import { UserPolicyService } from '../users/policies/user-policy.service';
+import { RoleService } from '../users/role/role.service';
+import { messagesConstant } from 'src/common/constants/messages.constant';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
-@ApiTags('Blog') 
+@ApiTags('Blog')
 @ApiBearerAuth()
 @Controller('blog')
 export class BlogController {
-  constructor(private readonly blogService: BlogService) {}
+  usersService: any;
+  constructor(
+    private readonly blogService: BlogService,
+  ) { }
 
   @Post()
   @UseGuards(JwtAuthGuard)
@@ -49,5 +58,16 @@ export class BlogController {
   @ApiOperation({ summary: 'Get a single blog post (public)' })
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.blogService.findOneById(id);
+  }
+
+  @Put(':id')
+  @UseGuards(JwtAuthGuard)
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserDto: UpdateBlogDto,
+    @Request() req,
+  ) {
+    await this.blogService.update(id, updateUserDto);
+    return { message: messagesConstant.USER_UPDATED };
   }
 }
