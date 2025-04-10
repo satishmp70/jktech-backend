@@ -30,7 +30,7 @@ export class AuthController {
   @UseGuards(AuthGuard('google'))
   googleLogin() { }
 
-
+  @Public()
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   handleGoogleCallback(@Req() req: any, @Res() res: Response) {
@@ -38,30 +38,21 @@ export class AuthController {
     return res.redirect(`http://localhost:4200/auth/callback?token=${token}`);
   }
 
-  // @Public()
-  // @Get('google/redirect')
-  // @UseGuards(AuthGuard('google'))
-  // async googleRedirect(@Req() req, @Res() res: Response) {
-  //   const user = req.user;
-
-  //   const jwt = await this.authService.validateOAuthLogin(user, 'google');
-
-  //   const frontendUrl = `http://localhost:4200/auth/callback?token=${jwt.access_token}&user=${encodeURIComponent(JSON.stringify(jwt.user))}`;
-  //   return res.redirect(frontendUrl);
-
-  // }
-
   @Public()
   @Get('facebook')
   @UseGuards(AuthGuard('facebook'))
-  facebookLogin() { }
+  @Public()
+  async facebookAuth() {
+    
+  }
 
   @Public()
-  @Get('facebook/redirect')
+  @Get('facebook/callback')
   @UseGuards(AuthGuard('facebook'))
-  facebookRedirect(@Req() req) {
-    const token = this.authService.generateToken(req.user);
-    return { token, user: req.user };
+  @Public()
+  handleFacebookCallback(@Req() req, @Res() res: Response) {
+    const token = req.user.token;
+    return res.redirect(`http://localhost:4200/auth/callback?token=${token}&provider=facebook`);
   }
 
 }
