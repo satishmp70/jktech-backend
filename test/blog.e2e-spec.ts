@@ -59,7 +59,7 @@ describe('BlogController (e2e)', () => {
       })
       .expect(200);
 
-    expect(res.body.message).toBe('User updated successfully');
+    expect(res.body.message).toBe('Blog updated successfully');
   });
 
   afterAll(async () => {

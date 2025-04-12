@@ -1,5 +1,5 @@
 import { INestApplication } from '@nestjs/common';
-import  request from 'supertest';
+import request from 'supertest';
 import { Test } from '@nestjs/testing';
 import { AppModule } from '../src/app.module';
 
@@ -21,13 +21,14 @@ describe('AuthController (e2e)', () => {
     const res = await request(app.getHttpServer())
       .post('/auth/login')
       .send({
-        email: 'test@example.com',
-        password: 'password',
+        email: 'admin@example.com',
+        password: 'adminpass', 
       });
 
     expect(res.statusCode).toBe(201);
     expect(res.body.accessToken).toBeDefined();
-    jwtToken = res.body.accessToken;
+
+    jwtToken = res.body.accessToken; 
   });
 
   afterAll(async () => {
