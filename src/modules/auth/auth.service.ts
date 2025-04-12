@@ -1,8 +1,8 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { messagesConstant } from 'src/common/constants/messages.constant';
+import { PrismaService } from '../../prisma/prisma.service';
+import { messagesConstant } from '../../common/constants/messages.constant';
 import { UsersService } from '../users/users.service';
 
 @Injectable()

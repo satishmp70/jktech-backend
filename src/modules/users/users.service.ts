@@ -1,9 +1,10 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { PasswordService } from 'src/common/services/password.service';
-import { messagesConstant } from 'src/common/constants/messages.constant';
+import { PasswordService } from '../../common/services/password.service';
+
+import { messagesConstant } from '../../common/constants/messages.constant';
 import { User } from '@prisma/client';
 
 @Injectable()

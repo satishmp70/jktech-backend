@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { UpdateUserDto } from '../dto/update-user.dto';
-import { messagesConstant } from 'src/common/constants/messages.constant';
+import { messagesConstant } from '../../../common/constants/messages.constant';
 
 @Injectable()
 export class UserPolicyService {

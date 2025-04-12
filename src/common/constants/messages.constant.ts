@@ -31,5 +31,9 @@ export const messagesConstant = {
     FORBIDDEN: 'Access denied.',
     BAD_REQUEST: 'Bad request.',
     INTERNAL_SERVER_ERROR: 'Something went wrong, please try again later.',
+
+    // blog 
+    BLOG_UPDATED: 'Blog updated successfully',
+    BLOG_DELETED: 'Blog deleted successfully',
   };
   
