@@ -22,9 +22,9 @@ describe('AuthController (e2e)', () => {
       .post('/auth/login')
       .send({
         email: 'admin@example.com',
-        password: 'adminpass', 
+        password: 'secureadminpass',
       });
-
+      
     expect(res.statusCode).toBe(201);
     expect(res.body.accessToken).toBeDefined();
 

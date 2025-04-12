@@ -6,8 +6,12 @@ export class RoleService {
   constructor(private readonly prisma: PrismaService) {}
 
   async getOneById(id: number) {
+    if (!id) {
+      throw new Error('Invalid ID'); // You can throw a custom error or handle it as needed
+    }
+
     return this.prisma.role.findUnique({
-      where: { id },
+      where: { id }, // Ensure `id` is valid
     });
   }
 
@@ -15,13 +19,17 @@ export class RoleService {
     return this.prisma.role.findMany();
   }
 
-  async create(name: string) {
+  async create(name: string, id: number) { 
     return this.prisma.role.create({
-      data: { name },
+      data: { id, name }, 
     });
   }
 
   async delete(id: number) {
+    if (!id) {
+      throw new Error('Invalid ID');
+    }
+
     return this.prisma.role.delete({
       where: { id },
     });
