@@ -11,10 +11,9 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { FindAllUsersDto } from './dto/find-all-users.dto';
 import { ApiTags, ApiQuery } from '@nestjs/swagger';
 import { RoleService } from './role/role.service';
-import { Public, Roles } from '../../../src/common/decorators/public.decorator';
+import { Public } from '../../common/decorators';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
-import { Role } from '../../../src/common/decorators/role.enum';
 import { messagesConstant } from '../../common/constants/messages.constant';
 import { UserPolicyService } from './policies/user-policy.service';
 

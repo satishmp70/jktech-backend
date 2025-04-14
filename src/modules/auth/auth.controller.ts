@@ -3,7 +3,7 @@ import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth } from '@nestjs/swagger';
-import { Public } from '../../common/decorators/public.decorator';
+import { Public } from '../../common/decorators';
 import { Response } from 'express';
 
 @Controller('auth')

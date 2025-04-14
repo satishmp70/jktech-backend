@@ -11,9 +11,9 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
     private configService: ConfigService,
   ) {
     super({
-      clientID: process.env.FACEBOOK_CLIENT_ID,
-      clientSecret: process.env.FACEBOOK_APP_SECRET,
-      callbackURL: process.env.FACEBOOK_CALLBACK_URL,
+      clientID: configService.get<string>('FACEBOOK_CLIENT_ID'),
+      clientSecret: configService.get<string>('FACEBOOK_CLIENT_SECRET'),
+      callback: configService.get<string>('FACEBOOK_CALLBACK_URL'),    
       profileFields: ['id', 'emails', 'name', 'picture.type(large)'],
       scope: 'email',
     });
@@ -21,12 +21,14 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
 
   async validate(accessToken: string, refreshToken: string, profile: Profile) {
     const { id, emails, name, photos } = profile;
+
     const userProfile = {
       facebookId: id,
-      email: emails?.[0]?.value,
-      name: `${name.givenName} ${name.familyName}`,
-      avatar: photos?.[0]?.value,
+      email: emails?.[0]?.value ?? '', 
+      name: `${name?.givenName ?? ''} ${name?.familyName ?? ''}`, 
+      avatar: photos?.[0]?.value ?? '',
     };
+
     return this.authService.validateOAuthLogin(userProfile, 'facebook');
   }
 }

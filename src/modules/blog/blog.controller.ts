@@ -15,7 +15,7 @@ import { CreateBlogDto } from './dto/create-blog.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt.guard';
 import { ApiBearerAuth, ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { RolesGuard } from '../auth/guards/roles.guard';
-import { Public } from '../../common/decorators/public.decorator';
+import { Public } from '../../common/decorators';
 import { UpdateBlogDto } from './dto/update-blog.dto';
 import { messagesConstant } from '../../common/constants/messages.constant';
 
