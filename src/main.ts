@@ -1,29 +1,40 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { ConfigService } from '@nestjs/config';
+import { ServerConfig } from './configurations/server.config';
+import { VersioningType } from '@nestjs/common';
+import { Environment } from './configurations';
+import { AppConfig } from './configurations/app.config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import * as dotenv from 'dotenv';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Swagger setup
-  const config = new DocumentBuilder()
-  .setTitle('My API')
-  .setDescription('API for blogging app')
-  .setVersion('1.0')
-  .addBearerAuth()
-  .build();
+  app.enableVersioning({
+    type: VersioningType.URI,
+  });
 
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  const configService = app.get(ConfigService);
+  const { port, nodeEnv } = configService.getOrThrow<ServerConfig>('config');
 
-  dotenv.config();
+  if (nodeEnv == Environment.Development) {
+    const swaggerConfig =
+      configService.getOrThrow<AppConfig['swagger']>('swagger');
+    const config = new DocumentBuilder()
+      .setTitle(swaggerConfig.title)
+      .setVersion(swaggerConfig.version)
+      .addBearerAuth()
+      .addSecurityRequirements('bearer')
+      .build();
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup(swaggerConfig.path, app, document);
+  }
 
   app.enableCors({
     origin: true,
     credentials: true,
   });
-
-  await app.listen(process.env.PORT ?? 3000);
+  
+  await app.listen(port);
 }
 bootstrap();

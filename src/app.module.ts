@@ -1,24 +1,53 @@
-import { Module } from '@nestjs/common';
+import { Module, ValidationPipe } from '@nestjs/common';
+import { APP_GUARD, APP_PIPE } from '@nestjs/core';
+import { ConfigModule } from '@nestjs/config';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthModule } from './modules/auth/auth.module';
 import { PrismaService } from './prisma/prisma.service';
-import { UsersModule } from './modules/users/users.module';
-import { ConfigModule } from '@nestjs/config';
-import { APP_GUARD } from '@nestjs/core';
-import { JwtAuthGuard } from './modules/auth/guards/jwt.guard';
 import { PasswordService } from './common/services/password.service';
+
+import { AuthModule } from './modules/auth/auth.module';
+import { UsersModule } from './modules/users/users.module';
 import { BlogModule } from './modules/blog/blog.module';
+
+import { JwtAuthGuard } from './modules/auth/guards/jwt.guard';
+import { serverConfig, validate } from './configurations';
+import { appConfig } from './configurations/app.config';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
-    AuthModule, UsersModule,BlogModule],
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: ['local.env', 'development.env', 'production.env', '.env'],
+      load: [serverConfig, appConfig],
+      cache: true,
+      validate,
+    }),
+    AuthModule,
+    UsersModule,
+    BlogModule,
+  ],
   controllers: [AppController],
-  providers: [AppService, PrismaService,{
-    provide: APP_GUARD,
-    useClass: JwtAuthGuard,
-  },PasswordService],
-  exports:[PasswordService],
+  providers: [
+    AppService,
+    PrismaService,
+    PasswordService,
+    {
+      provide: APP_PIPE,
+      useValue: new ValidationPipe({
+        transform: true,
+        stopAtFirstError: true,
+        whitelist: true,
+        forbidUnknownValues: true,
+        forbidNonWhitelisted: true,
+      }),
+    },
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
+  exports: [PasswordService],
 })
 export class AppModule {}
