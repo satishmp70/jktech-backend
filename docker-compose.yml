@@ -1,0 +1,31 @@
+
+services:
+  backend:
+    build: .
+    container_name: jktech-backend
+    ports:
+      - '3000:3000'
+    env_file:
+      - .env
+    depends_on:
+      - db
+    restart: unless-stopped
+    command: ["./start.sh"]
+    volumes:
+      - .:/app
+
+  db:
+    image: postgres:14
+    container_name: jktech-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Satish@456
+      POSTGRES_DB: jk-tech
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

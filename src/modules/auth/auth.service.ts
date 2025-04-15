@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { PrismaService } from '../../prisma/prisma.service';
 import { messagesConstant } from '../../common/constants/messages.constant';
 import { UsersService } from '../users/users.service';
@@ -22,7 +22,9 @@ export class AuthService {
     if (!user || user.isDeleted) {
       throw new UnauthorizedException(messagesConstant.INVALID_CRED);
     }
-
+    if (!user.password) {
+      throw new Error('Password cannot be null or undefined');
+    }
     const match = await bcrypt.compare(password, user.password);
     if (!match) {
       throw new UnauthorizedException(messagesConstant.INVALID_CRED);

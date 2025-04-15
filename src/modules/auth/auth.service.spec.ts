@@ -1,3 +1,4 @@
+import * as bcrypt from 'bcryptjs';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { JwtService } from '@nestjs/jwt';
@@ -5,8 +6,11 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { UsersService } from '../users/users.service';
 import { UnauthorizedException } from '@nestjs/common';
 import { messagesConstant } from '../../common/constants/messages.constant';
-jest.mock('bcrypt');
-import * as bcrypt from 'bcrypt';
+
+jest.mock('bcryptjs', () => ({
+  compare: jest.fn(),
+  hash: jest.fn(),
+}));
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -51,7 +55,7 @@ describe('AuthService', () => {
   describe('validateUser', () => {
     it('should throw if user not found or deleted', async () => {
       mockPrismaService.user.findUnique.mockResolvedValue(null);
-      (bcrypt.compare as jest.Mock).mockResolvedValue(true);
+      (bcrypt.compare as jest.Mock).mockResolvedValue(true);      
       await expect(service.validateUser('email', 'password')).rejects.toThrow(
         new UnauthorizedException(messagesConstant.INVALID_CRED),
       );
