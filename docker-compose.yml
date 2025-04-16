@@ -2,20 +2,23 @@
 services:
   backend:
     build: .
+    environment:
+      - DATABASE_URL=postgresql://postgres:Satish@456@postgres:5432/jk-tech
     container_name: jktech-backend
+    restart: unless-stopped
     ports:
       - '3000:3000'
     env_file:
       - .env
-    depends_on:
-      - db
-    restart: unless-stopped
-    command: ["./start.sh"]
     volumes:
       - .:/app
+      - /app/node_modules 
+    depends_on:
+      - postgres
+    command: ["./start.sh"]
 
-  db:
-    image: postgres:14
+  postgres:
+    image: postgres:15
     container_name: jktech-db
     restart: unless-stopped
     environment:
